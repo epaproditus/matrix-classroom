@@ -1,0 +1,12 @@
+{
+  "defaultHomeserver": 0,
+  "homeserverList": [
+    "https://class.epaphrodit.us"
+  ],
+  "allowCustomHomeservers": false,
+  "featuredCommunities": [],
+  "brand": "Cinny (Classroom)",
+  "welcomeMessage": "Welcome to 7th Period Matrix!",
+  "showWelcomePage": true,
+  "syncHomeserverFromEntry": false
+}

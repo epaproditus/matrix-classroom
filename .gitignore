@@ -1,0 +1,19 @@
+# Secrets — never commit!
+*.env
+*.token
+*.token.env
+.admin-token.env
+google-oauth-client.json
+homeserver.yaml.backup
+
+# Docker volumes (large binary data + secrets in config)
+deploy/synapse/data/
+deploy/postgres/data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc

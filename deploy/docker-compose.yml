@@ -1,0 +1,71 @@
+# ──────────────────────────────────────────────
+# Matrix Classroom AI — Docker Compose Stack
+# Synapse + PostgreSQL + Ketesa + Caddy
+# ──────────────────────────────────────────────
+# Domain: class.mr-romero.com
+# Cloudflare Tunnel → host ports (not direct HTTPS)
+# ──────────────────────────────────────────────
+
+services:
+
+  # ─── Synapse Homeserver ─────────────────────
+  synapse:
+    image: matrixdotorg/synapse:latest
+    container_name: matrix-synapse
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8010:8008"
+    volumes:
+      - ./synapse/data:/data
+    environment:
+      - SYNAPSE_SERVER_NAME=class.mr-romero.com
+      - SYNAPSE_REPORT_STATS=no
+      - PYTHONPATH=/data/modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8008/_matrix/client/versions"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # ─── PostgreSQL Database ───────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: matrix-postgres
+    restart: unless-stopped
+    volumes:
+      - ./postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=synapse
+      - POSTGRES_USER=synapse
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme_in_prod}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U synapse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Ketesa Admin UI ───────────────────────
+  ketesa:
+    image: ghcr.io/etkecc/ketesa:latest
+    container_name: matrix-ketesa
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8011:8080"
+    # No config needed — just point it at Synapse's URL on login
+
+  # ─── Cinny Web Client ──────────────────────
+  cinny:
+    image: ghcr.io/cinnyapp/cinny:latest
+    container_name: matrix-cinny
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8012:80"
+    volumes:
+      - ./cinny/config.json:/app/config.json
+
+volumes:
+  postgres_data:
+  synapse_data:
