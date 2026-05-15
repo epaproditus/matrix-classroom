@@ -1,0 +1,647 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bluebonnet Runtime Spec v0.1.0",
+  "description": "An open specification for executable Bluebonnet Learning lessons. Each .lesson file defines a complete Campus 5-Step Cycle as a state machine with typed slots for TEA-verbatim content, discourse prompts, participation strategies, exit tickets, TEKS tags, and a memory protocol. The Matrix bot is one reference implementation; any runtime (Chromebook app, Google Classroom plugin, LMS widget) can execute this spec.",
+  "version": "0.1.0",
+  "license": "CC-BY-4.0",
+  "spec_uri": "https://github.com/mr-romero/bluebonnet-runtime/spec/v0.1.0",
+
+  "lesson": {
+    "id": "G8_M3_T1_L2",
+    "metadata": {
+      "title": "Drawing Trend Lines",
+      "grade": 8,
+      "course": "Grade 8 Mathematics",
+      "module": {
+        "number": 3,
+        "title": "Modeling Linear Relationships"
+      },
+      "topic": {
+        "number": 1,
+        "title": "Scatterplots and Trend Lines"
+      },
+      "lesson_number": 2,
+      "pacing_days": [74, 75],
+      "total_class_days": 2,
+      "teks": [
+        {
+          "code": "8.5D",
+          "description": "Use a trend line that approximates the linear relationship between bivariate sets of data to make predictions."
+        },
+        {
+          "code": "8.5I",
+          "description": "Write an equation in the form y = mx + b to model a linear relationship between two quantities using verbal, numerical, tabular, and graphical representations."
+        }
+      ],
+      "elps": ["3H", "4G"],
+      "source": "TEA Bluebonnet Learning, Grade 8 Mathematics, Edition 1",
+      "source_license": "TEA OER (Texas Education Code Chapter 31)",
+      "bluebonnet_phase_mapping": {
+        "before": ["step_1_bell_ringer", "step_2_hook"],
+        "during": ["step_3_di_and_3a_talk", "step_3b_participation", "step_4_practice"],
+        "after": ["step_5_closure"]
+      }
+    },
+
+    "essential_ideas": [
+      "A trend line is a straight line that is as close to as many points as possible, but does not have to go through any of the points on the scatterplot.",
+      "Equations can be written for a trend line.",
+      "A trend line can be used to make predictions about bivariate data.",
+      "A trend line and its equation are often referred to as a model of the data."
+    ],
+
+    "common_misconceptions": [
+      {
+        "id": "misconception_trend_through_points",
+        "description": "Students might think that the trend line has to go through some of the points on the graph.",
+        "intervention": "Demonstrate different possible trend lines showing some lines that go through the points and some that do not. Have students help determine which lines are a better fit.",
+        "detection_signals": [
+          "Student draws line only through data points",
+          "Student says 'the line has to touch the dots'",
+          "Student rejects valid trend line because it misses all points"
+        ]
+      }
+    ],
+
+    "academic_glossary": [
+      {
+        "term": "trend line",
+        "definition": "A straight line that best approximates the relationship between two variables in a scatterplot.",
+        "spanish": "linea de tendencia"
+      },
+      {
+        "term": "line of best fit",
+        "definition": "Another name for a trend line; the line that minimizes the overall distance to all data points.",
+        "spanish": "linea de mejor ajuste"
+      },
+      {
+        "term": "interpolate",
+        "definition": "To predict a value within the range of observed data.",
+        "spanish": "interpolar"
+      },
+      {
+        "term": "extrapolate",
+        "definition": "To predict a value outside the range of observed data.",
+        "spanish": "extrapolar"
+      }
+    ],
+
+    "cycle": {
+      "step_1_bell_ringer": {
+        "step_number": 1,
+        "label": "Bell Ringer",
+        "bluebonnet_phase": "before",
+        "timer_minutes": 5,
+        "source": "skills_practice",
+        "source_note": "Spiral review — NOT from TEA lesson slides. Sourced from Skills Practice PDFs for prior TEKS.",
+        "content_type": "spiral_review",
+        "problems": [
+          {
+            "id": "br_1",
+            "teks_reviewed": "8.5A",
+            "stem": "The table shows the number of hours studied and test scores for 6 students. Does the data show a positive association, negative association, or no association? Explain your reasoning.",
+            "data": {
+              "headers": ["Hours Studied", "Test Score"],
+              "rows": [[1, 62], [2, 70], [3, 75], [4, 80], [5, 88], [6, 95]]
+            },
+            "expected_response_type": "text",
+            "rubric": {
+              "mastery": "Identifies positive association AND explains that as hours increase, scores increase.",
+              "developing": "Identifies positive association but cannot articulate why.",
+              "beginning": "Incorrect identification or no reasoning."
+            }
+          },
+          {
+            "id": "br_2",
+            "teks_reviewed": "8.5C",
+            "stem": "Which scatterplot below shows a negative linear association?",
+            "expected_response_type": "multiple_choice",
+            "choices": ["A", "B", "C", "D"],
+            "correct": "C",
+            "media_reference": "bell_ringer_scatterplots.png"
+          }
+        ],
+        "memory_protocol": {
+          "track": "per_student_response",
+          "evidence_level": "participation",
+          "teks_decay_check": true,
+          "decay_note": "If student last demonstrated 8.5A mastery >14 days ago, flag for additional spiral review."
+        },
+        "bot_behavior": {
+          "post_problems": true,
+          "collect_responses": true,
+          "reveal_answers": "after_timer_expires",
+          "wrong_answer_action": "log_to_honcho_and_flag_for_teacher",
+          "silent_student_alert_after_minutes": 3
+        }
+      },
+
+      "step_2_hook": {
+        "step_number": 2,
+        "label": "Hook",
+        "bluebonnet_phase": "before",
+        "timer_minutes": 3,
+        "content_type": "dramatic_question",
+        "hook": {
+          "type": "real_world_provocation",
+          "prompt": "Presidential biography sales from bookstores have been changing every year since 2017. If you could see the data, could you predict what sales will look like in 2025? What about 2030? How confident would you be in your prediction?",
+          "media": null,
+          "engagement_target": "curiosity_about_prediction"
+        },
+        "bot_behavior": {
+          "post_hook": true,
+          "collect_initial_predictions": true,
+          "revisit_at_closure": true,
+          "cognitive_debt_guard": "Students must commit a prediction BEFORE seeing data. No passive observation."
+        }
+      },
+
+      "step_3_di_and_3a_talk": {
+        "step_number": 3,
+        "label": "Direct Instruction + 3A Talk",
+        "bluebonnet_phase": "during",
+        "timer_minutes": 18,
+        "discourse_interval_minutes": 8,
+        "content_source": "TEA verbatim — facilitation notes + slide content",
+        "fidelity_rule": "NEVER paraphrase, summarize, or rephrase TEA content. Post exact text. If student asks for clarification, ask probing questions — do not restate content in different words.",
+
+        "blocks": [
+          {
+            "block_id": "di_block_1",
+            "block_label": "Getting Started — Pasta as Movable Line",
+            "phase": "before_activity",
+            "content_verbatim": "In this activity, students begin analyzing data for the percent of presidential biographies sales from bookstores from 2017 through 2023. They use thin pasta as a tool to determine unknown values from the table and graph.",
+            "student_task": "Work with a partner or in a group to complete Questions 1 through 4.",
+            "materials": ["thin pasta or patty paper (physical) OR digital line tool"],
+            "differentiation": {
+              "strategy": "Access for All",
+              "description": "Instead of using pasta as a movable line, have students draw a line on a sheet of patty paper to use as a movable line.",
+              "digital_adaptation": "Bot provides an interactive prompt where students describe where they would place their line and why."
+            },
+
+            "discourse_pause": {
+              "type": "3a_talk",
+              "timing": "after_questions_1_through_4",
+              "talk_stems": [
+                {
+                  "id": "stem_1",
+                  "category": "gathering",
+                  "stem": "Why is the response variable percent of total sales instead of time?",
+                  "purpose": "Activate prior knowledge about dependent/independent variables."
+                },
+                {
+                  "id": "stem_2",
+                  "category": "probing",
+                  "stem": "I placed my line ______ because ______.",
+                  "purpose": "Force students to articulate trend line placement reasoning."
+                },
+                {
+                  "id": "stem_3",
+                  "category": "probing",
+                  "stem": "Did you use the table or the scatterplot to make your decision? Why or why not?",
+                  "purpose": "Surface multiple representations."
+                },
+                {
+                  "id": "stem_4",
+                  "category": "seeing_structure",
+                  "stem": "What would the point (0, 0) represent in this situation?",
+                  "purpose": "Connect abstract coordinates to real-world meaning."
+                },
+                {
+                  "id": "stem_5",
+                  "category": "probing",
+                  "stem": "Did everyone predict the same line? Why or why not?",
+                  "purpose": "Surface variability in trend line placement — key conceptual insight."
+                }
+              ],
+              "bot_behavior": {
+                "post_one_stem_at_a_time": true,
+                "wait_for_responses_seconds": 90,
+                "minimum_responses_before_next": 2,
+                "seed_peer_response": false,
+                "highlight_interesting_responses": true,
+                "cognitive_debt_guard": "Every student must post at least one response before bot advances. Bot does NOT provide the answer.",
+                "silent_student_action": "DM student with simplified version of the stem + encouragement"
+              }
+            }
+          },
+          {
+            "block_id": "di_block_2",
+            "block_label": "Activity 2.1 — A Trend Line",
+            "phase": "during_activity",
+            "content_verbatim": "Students continue analyzing data for the percent of presidential biographies sales from a bookstore from 2017 through 2023. Students draw their trend line on the scatterplot in the Getting Started. They use two points on the trend line to determine the slope and equation of the line. Using the trend line, students predict past and future sales.",
+            "student_task": "Review the Worked Example, complete Questions 1 and 2 as a class, then work with a partner to complete Questions 3 and 4.",
+            "definitions_introduced": ["trend line", "interpolation", "extrapolation"],
+
+            "differentiation": {
+              "strategy": "Just in Time Support",
+              "description": "Have students interact with the Worked Example by using a colored pencil to reenact the steps. Suggest students use points that lie on grid lines to write the equation of the trend line.",
+              "digital_adaptation": "Bot walks through worked example step-by-step, pausing for student input at each step. Student must identify the two points before bot proceeds."
+            },
+
+            "discourse_pause": {
+              "type": "3a_talk",
+              "timing": "after_worked_example",
+              "talk_stems": [
+                {
+                  "id": "stem_6",
+                  "category": "probing",
+                  "stem": "Do you have to choose the y-intercept as one of your points to write your equation?",
+                  "purpose": "Challenge assumption that y-intercept must be used."
+                },
+                {
+                  "id": "stem_7",
+                  "category": "seeing_structure",
+                  "stem": "I think the trend line equation is y = ______ because I used the points ______ and ______.",
+                  "purpose": "Force explicit articulation of method."
+                },
+                {
+                  "id": "stem_8",
+                  "category": "seeing_structure",
+                  "stem": "Does the y-intercept make sense in this context? Explain your thinking.",
+                  "purpose": "Connect abstract equation to real-world meaning."
+                },
+                {
+                  "id": "stem_9",
+                  "category": "gathering",
+                  "stem": "How are interpolating and extrapolating the same? Different?",
+                  "purpose": "Compare and contrast new vocabulary."
+                },
+                {
+                  "id": "stem_10",
+                  "category": "probing",
+                  "stem": "Compare the steps to interpolate and extrapolate a value of the response variable.",
+                  "purpose": "Deepen procedural understanding."
+                }
+              ],
+              "bot_behavior": {
+                "post_one_stem_at_a_time": true,
+                "wait_for_responses_seconds": 90,
+                "minimum_responses_before_next": 2,
+                "seed_peer_response": false,
+                "highlight_interesting_responses": true,
+                "cognitive_debt_guard": "Student must show their two chosen points and slope calculation before bot confirms equation.",
+                "math_verification": {
+                  "enabled": true,
+                  "method": "step_by_step_validator",
+                  "note": "Bot NEVER confirms a student equation without verifying slope = (y2-y1)/(x2-x1) and y-intercept computation. If bot cannot verify, defer to teacher."
+                }
+              }
+            }
+          }
+        ]
+      },
+
+      "step_3b_participation": {
+        "step_number": "3B",
+        "label": "Participation Strategy (Lead4Ward)",
+        "bluebonnet_phase": "during",
+        "timer_minutes": 7,
+        "frequency": "at_least_once_per_week",
+        "strategy": {
+          "name": "four_corners",
+          "description": "Students choose a corner based on their response and discuss with others who made the same choice.",
+          "digital_adaptation": "Bot posts a multiple-choice question using Matrix reactions. Students react with their choice. Bot groups students by choice and posts a follow-up discussion prompt for each group.",
+          "prompt": "Which trend line is the BEST fit for the presidential biography data? React with your choice: A, B, C, or D.",
+          "choices": [
+            {"label": "A", "reaction": "\ud83c\udd70\ufe0f", "description": "Line goes through first and last point"},
+            {"label": "B", "reaction": "\ud83c\udd71\ufe0f", "description": "Line is closest to the most points"},
+            {"label": "C", "reaction": "\ud83c\udd7e\ufe0f", "description": "Line goes through the origin"},
+            {"label": "D", "reaction": "\ud83c\udd73\ufe0f", "description": "Line splits the points evenly above and below"}
+          ],
+          "correct": "B",
+          "follow_up_by_group": {
+            "A": "You chose the line through the first and last point. What if those two points are outliers? Would your line still be a good fit?",
+            "B": "You chose the line closest to the most points. How did you decide which line was 'closest'? What does 'closest' mean mathematically?",
+            "C": "You chose the line through the origin. Does (0, 0) make sense for this data? What would 0% sales in year 0 mean?",
+            "D": "You chose the line that splits points evenly. Is that the same as being 'closest to the most points'? Why or why not?"
+          }
+        },
+        "bot_behavior": {
+          "post_question_with_reactions": true,
+          "wait_seconds": 45,
+          "announce_groupings": true,
+          "post_follow_up_per_group": true,
+          "engagement_decay_note": "Physical Four Corners works via movement. Digital version must compensate with urgency (timer visible) and social proof (show how many in each corner)."
+        }
+      },
+
+      "step_4_practice": {
+        "step_number": 4,
+        "label": "Practice",
+        "bluebonnet_phase": "during",
+        "timer_minutes": 18,
+        "practice_type": "collaborative",
+        "learning_mode": "learning_together",
+        "problem_solving_model": {
+          "steps": ["Notice and Wonder", "Organize and Mathematize", "Predict and Analyze", "Test and Interpret", "Report"],
+          "bot_scaffolds_each_step": true
+        },
+        "problems": [
+          {
+            "id": "practice_1",
+            "stem": "The scatterplot shows the relationship between the number of years since 2010 and the average price of a movie ticket. A trend line is drawn on the scatterplot.",
+            "parts": [
+              {
+                "part": "a",
+                "prompt": "Use two points on the trend line to write an equation for the trend line.",
+                "expected_response_type": "math_expression",
+                "input_method": ["typed_equation", "photo_of_handwork"],
+                "math_verification": true,
+                "rubric": {
+                  "mastery": "Correctly identifies two points on the trend line (not data points unless they fall on the line), calculates slope, writes equation in y=mx+b form.",
+                  "developing": "Identifies points but makes arithmetic error in slope or y-intercept.",
+                  "beginning": "Uses data points instead of trend line points, or cannot set up the calculation."
+                }
+              },
+              {
+                "part": "b",
+                "prompt": "Use your equation to predict the average movie ticket price in 2025.",
+                "expected_response_type": "math_expression",
+                "input_method": ["typed_equation", "photo_of_handwork"],
+                "math_verification": true,
+                "follow_up": "Is this interpolation or extrapolation? How do you know?"
+              },
+              {
+                "part": "c",
+                "prompt": "Use your equation to estimate the average movie ticket price in 2013.",
+                "expected_response_type": "math_expression",
+                "input_method": ["typed_equation", "photo_of_handwork"],
+                "math_verification": true,
+                "follow_up": "Is this interpolation or extrapolation? How confident are you in this prediction compared to part (b)?"
+              }
+            ]
+          }
+        ],
+        "bot_behavior": {
+          "scaffold_not_answer": true,
+          "wrong_answer_action": "Ask probing question related to the specific error. Never give the correct answer directly.",
+          "stuck_student_action": "Walk through Problem-Solving Model steps: 'What do you NOTICE about the scatterplot? What two points on the TREND LINE could you use?'",
+          "photo_input": {
+            "enabled": true,
+            "description": "Student snaps photo of handwritten work. Vision model extracts math and checks steps.",
+            "fallback": "If vision model cannot parse, ask student to describe their steps in words."
+          },
+          "cognitive_debt_guard": "Bot must NOT solve any part of the problem. Bot asks questions that lead student to discover their own error.",
+          "teacher_radar_triggers": [
+            "Student stuck >4 minutes with no submission",
+            "Student submits same wrong answer twice",
+            "Student response shows misconception_trend_through_points"
+          ]
+        },
+        "memory_protocol": {
+          "track": "per_student_per_part",
+          "evidence_level": "mastery_with_reasoning",
+          "store_work_artifact": true,
+          "teks_tag": ["8.5D", "8.5I"]
+        }
+      },
+
+      "step_5_closure": {
+        "step_number": 5,
+        "label": "Closure",
+        "bluebonnet_phase": "after",
+        "timer_minutes": 5,
+
+        "essential_question_revisit": {
+          "prompt": "Look back at your prediction from the Hook. Now that you know about trend lines, would you change your prediction? Why or why not?",
+          "connection_to_hook": true,
+          "bot_behavior": {
+            "post_in_team_room": true,
+            "collect_responses": true,
+            "highlight_growth": "Compare student's Hook prediction to their Closure response. Note growth in Honcho."
+          }
+        },
+
+        "talk_the_talk": {
+          "source": "TEA verbatim",
+          "content": "Tables and scatterplots can be used to display bivariate data sets. The values of data points that lie between provided data can be predicted. A trend line is a straight line that is as close to as many points as possible.",
+          "bot_behavior": {
+            "post_summary": true,
+            "do_not_paraphrase": true
+          }
+        },
+
+        "exit_ticket": {
+          "delivery": "dm",
+          "delivery_note": "Exit ticket sent via DM to each student individually. Responses are private — not visible to peers.",
+          "problems": [
+            {
+              "id": "et_1",
+              "type": "multiple_choice",
+              "stem": "A trend line for a scatterplot passes through (2, 15) and (8, 45). What is the slope of the trend line?",
+              "choices": [
+                {"label": "A", "value": "5"},
+                {"label": "B", "value": "6"},
+                {"label": "C", "value": "10"},
+                {"label": "D", "value": "30"}
+              ],
+              "correct": "A",
+              "teks": "8.5I",
+              "common_error": "C — student subtracts only y-values (45-15=30) without dividing by x-difference"
+            },
+            {
+              "id": "et_2",
+              "type": "short_answer",
+              "stem": "Using the trend line from Question 1, predict the y-value when x = 5. Show your work or explain your steps.",
+              "expected_answer": "y = 5(5) + 5 = 30",
+              "teks": "8.5D",
+              "input_method": ["typed", "photo_of_handwork"],
+              "math_verification": true,
+              "rubric": {
+                "mastery": "Correct answer with clear steps showing substitution into equation.",
+                "developing": "Correct process but arithmetic error.",
+                "beginning": "Cannot connect slope to equation or does not attempt substitution."
+              }
+            },
+            {
+              "id": "et_3",
+              "type": "short_answer",
+              "stem": "Is predicting the y-value when x = 20 interpolation or extrapolation? Explain.",
+              "expected_answer": "Extrapolation, because x = 20 is outside the range of the given data (x = 2 to x = 8).",
+              "teks": "8.5D"
+            }
+          ],
+          "bot_behavior": {
+            "send_via_dm": true,
+            "collect_and_grade": true,
+            "show_results_to_student": false,
+            "show_results_to_teacher": true,
+            "math_verification": true,
+            "cognitive_debt_guard": "No hints during exit ticket. This is assessment, not instruction."
+          },
+          "memory_protocol": {
+            "track": "per_student_per_question",
+            "evidence_level": "mastery_assessment",
+            "teks_mastery_update": true,
+            "flag_for_reteach": "If student scores 0/3 or 1/3, flag for next-day Bell Ringer reteach.",
+            "flag_for_extension": "If student scores 3/3 with strong reasoning, flag for extension activity.",
+            "staar_projection_update": true
+          }
+        }
+      }
+    },
+
+    "memory_protocol": {
+      "description": "Defines how the runtime tracks student understanding across the lesson lifecycle.",
+      "provider": "honcho",
+      "workspace": "vanguard-25_26-7th",
+
+      "per_student_tracking": {
+        "participation": {
+          "description": "Binary — did the student respond?",
+          "evidence_level": "low",
+          "tracked_at": ["step_1", "step_2", "step_3", "step_3b", "step_4", "step_5"]
+        },
+        "engagement_quality": {
+          "description": "Did the student produce original reasoning or parrot a stem?",
+          "evidence_level": "medium",
+          "tracked_at": ["step_3", "step_4"],
+          "detection_method": "Compare response to talk stem template. If >80% overlap with stem text, flag as low-quality."
+        },
+        "mastery": {
+          "description": "Did the student demonstrate understanding of the TEKS?",
+          "evidence_level": "high",
+          "tracked_at": ["step_4", "step_5"],
+          "source": "exit_ticket_score + practice_rubric"
+        }
+      },
+
+      "teks_mastery_model": {
+        "8.5D": {
+          "assessed_at": ["et_2", "et_3", "practice_1b", "practice_1c"],
+          "mastery_threshold": "2/4 assessed items at mastery level",
+          "decay_rate_days": 14,
+          "spiral_review_trigger": "Insert into Bell Ringer if last mastery demonstration >14 days ago"
+        },
+        "8.5I": {
+          "assessed_at": ["et_1", "practice_1a"],
+          "mastery_threshold": "1/2 assessed items at mastery level",
+          "decay_rate_days": 14,
+          "spiral_review_trigger": "Insert into Bell Ringer if last mastery demonstration >14 days ago"
+        }
+      },
+
+      "teacher_radar_events": {
+        "description": "Events sent to teacher's private DM channel during the lesson.",
+        "events": [
+          {
+            "trigger": "silent_student",
+            "condition": "No response from student for >4 minutes during active step",
+            "message_template": "{student_name} hasn't responded in {minutes} minutes during {step_label}.",
+            "suggested_action": "Walk over and check in quietly."
+          },
+          {
+            "trigger": "misconception_detected",
+            "condition": "Student response matches a known misconception pattern",
+            "message_template": "{student_name} in {team_room}: '{student_response}' — matches misconception: {misconception_id}.",
+            "suggested_action": "{misconception_intervention}"
+          },
+          {
+            "trigger": "team_stuck",
+            "condition": ">50% of team has not submitted for >5 minutes during Practice",
+            "message_template": "{team_room} appears stuck on {problem_id}. {count}/{total} students have not submitted.",
+            "suggested_action": "Visit the team. Consider asking: '{relevant_probing_question}'"
+          },
+          {
+            "trigger": "exit_ticket_alert",
+            "condition": "Student scores 0/3 or 1/3 on exit ticket",
+            "message_template": "{student_name} scored {score}/3 on exit ticket. Struggled with: {missed_teks}.",
+            "suggested_action": "Plan reteach for {missed_teks} in tomorrow's Bell Ringer. Consider pulling {student_name} for small group."
+          }
+        ]
+      },
+
+      "ferpa_audit_log": {
+        "description": "Parallel human-readable log of all student data stored. Required for FERPA compliance — vector embeddings alone are not sufficient for parent data requests.",
+        "format": "jsonl",
+        "per_entry": {
+          "timestamp": "ISO 8601",
+          "student_id": "Matrix user ID",
+          "event_type": "response | participation | mastery_update | misconception_flag",
+          "step": "step_number",
+          "content": "Human-readable description of what was recorded",
+          "teks": "TEKS code(s) if applicable",
+          "evidence_level": "participation | engagement_quality | mastery"
+        },
+        "retention_policy": "Retain for current school year + 1. Delete on student offboarding unless parent requests retention.",
+        "export_format": "CSV on parent request"
+      }
+    },
+
+    "teacher_controls": {
+      "god_mode": {
+        "description": "Teacher can override lesson pacing via DM commands to the bot.",
+        "commands": [
+          {
+            "command": "!pause",
+            "effect": "Bot stops advancing to next step. Current step remains active.",
+            "use_case": "Class needs more time. Fire drill. Behavioral issue."
+          },
+          {
+            "command": "!resume",
+            "effect": "Bot resumes lesson from where it paused.",
+            "use_case": "Ready to continue after pause."
+          },
+          {
+            "command": "!extend {minutes}",
+            "effect": "Add {minutes} to current step timer.",
+            "use_case": "Students need 3 more minutes on practice."
+          },
+          {
+            "command": "!skip",
+            "effect": "Advance to next step immediately.",
+            "use_case": "Students mastered content quickly. Skip to practice."
+          },
+          {
+            "command": "!reteach {misconception_id}",
+            "effect": "Bot posts targeted intervention content for the specified misconception.",
+            "use_case": "Teacher sees widespread confusion and wants bot to address it."
+          },
+          {
+            "command": "!status",
+            "effect": "Bot reports current step, time remaining, participation counts, and any alerts.",
+            "use_case": "Quick situational check."
+          }
+        ]
+      }
+    },
+
+    "runtime_requirements": {
+      "description": "Minimum capabilities a runtime must implement to execute this lesson spec.",
+      "required": [
+        "Timed message posting to group channels",
+        "Per-user direct messaging",
+        "Reaction/poll collection",
+        "Response collection and storage",
+        "Timer management with pause/resume/extend",
+        "State machine: track current step and transition on timer or teacher command",
+        "FERPA-compliant audit logging"
+      ],
+      "recommended": [
+        "Image/photo input processing (vision model)",
+        "Math expression verification (step-by-step validator)",
+        "Per-student memory with evidence quality levels",
+        "Teacher private channel for radar events",
+        "Forgetting curve tracking for spiral review"
+      ],
+      "reference_implementation": {
+        "name": "matrix-classroom-bot",
+        "runtime": "Hermes (classroom-bot profile)",
+        "protocol": "Matrix",
+        "client": "Cinny",
+        "memory": "Honcho (pgvector + Redis)",
+        "homeserver": "Synapse"
+      }
+    },
+
+    "spof_failover": {
+      "description": "If the runtime goes down mid-lesson, teacher must have a fallback.",
+      "plan": {
+        "printed_pdf": "Pre-generate a printable PDF version of this lesson's 5-step cycle. Keep 25 copies in classroom.",
+        "slide_deck": "TEA slide deck for this lesson is always available offline on teacher laptop.",
+        "student_notification": "If bot goes dark, teacher posts in room: 'Tech issues — switching to paper. Grab the handout from the front table.'"
+      }
+    }
+  }
+}

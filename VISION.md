@@ -57,8 +57,8 @@ It is a **new way of instruction delivery** that uses the Matrix protocol as the
 | 1 | Infrastructure | ✅ Complete (tech debt pending) |
 | 2 | Classroom Setup | ✅ Pilot done (tech debt pending) |
 | 3 | Draupnir Moderation | 🔜 **Next** |
-| 4 | Hermes Bot Features | ✅ Done (warm-up cron pending) |
-| 4.5 | Attendance Check-in | ✅ Done — `!here`/`!roll`, watchdog |
+| 4 | Hermes Bot Features | ✅ Done (warm-up system deployed) |
+| 4.5 | Attendance + Warm-up System | ✅ Done — `!here`/`!roll`, DM warmup, context injection |
 | 5 | Teacher Dashboard | 🔮 Future |
 | 6 | Badges/Gamification | 🔮 Future |
 
@@ -337,11 +337,13 @@ main.hermes (Discord/CLI/email)
        ├── Cinny web client (8012)
        ├── Honcho memory layer (8020)
        └── room_blocker module
-       └── **Attendance System** (deployed)
+       └── **Attendance + Warm-up System** (deployed 2026-05-15)
             ├── Gateway hook: `!here` / `!roll`
             ├── Plugin: registers commands
-            ├── Data: JSON per day (`~/.hermes/classroom/attendance/`)
-            └── Watchdog: no_agent cron → Discord notifications
+            ├── Plugin: `pre_llm_call` context injection (matrix-warmup-context)
+            ├── Data: per-day attendance JSON + active_warmups.json
+            ├── DM room auto-creation on check-in
+            └── Bell Ringer problem pool (4 problems, TEKS 8.5A-8.5I)
 ```
 
 ### What We Need to Build
@@ -467,13 +469,13 @@ The facilitation-notes JSON files contain structured lesson data:
 ### Immediate (Phase 3)
 1. Deploy Draupnir Docker container for moderation
 2. Finalize COPPA/FERPA data retention policy
-3. Set up warm-up cron (school-calendar-aware)
+3. ✅ **Done:** Warm-up system via `!here` check-in (DM delivery + context injection deployed 2026-05-15). **Remaining:** Cron-based auto-send for class start times.
 4. **NEW — FERPA audit log:** Begin parallel human-readable per-student log alongside Honcho vector embeddings (Claude Opus — do not retrofit)
 
 ### Short-term (Prototype the Vision)
 1. Pick **one lesson** — run the full campus cycle through bot in one class period
 2. Wire bot to read facilitation-notes.json per lesson
-3. Build Bell Ringer posting (pull from Skills Practice PDF)
+3. ✅ **Done:** Bell Ringer posting via `!here` check-in (hook + DM delivery + context injection). **Remaining:** Auto-send at class start, pull from Skills Practice PDF.
 4. Implement 3A Talk prompt with sentence stems
 5. Implement Collect + store Exit Ticket responses in Honcho
 6. **Teacher God-Mode:** Build DM channel for Pause/Extend/Skip override

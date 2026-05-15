@@ -66,6 +66,16 @@ services:
     volumes:
       - ./cinny/config.json:/app/config.json
 
+  # ─── Element Web Client ────────────────────
+  element:
+    image: ghcr.io/element-hq/element-web:latest
+    container_name: matrix-element
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8013:80"
+    volumes:
+      - ./element/config.json:/app/config.json
+
 volumes:
   postgres_data:
   synapse_data:

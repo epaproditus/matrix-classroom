@@ -263,7 +263,6 @@ MATRIX_HOMESERVER=https://class.epaphrodit.us
 MATRIX_ACCESS_TOKEN=...
 MATRIX_ENCRYPTION=true
 MATRIX_DEVICE_ID=classroom-bot
-MATRIX_REQUIRE_MENTION=true
 ```
 
 **Tasks:**

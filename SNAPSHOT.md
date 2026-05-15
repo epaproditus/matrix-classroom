@@ -1,5 +1,5 @@
 # Matrix Classroom — Project Snapshot
-# Generated: 2026-05-14 (Room blocker deployed — Synapse custom module + config)
+# Generated: 2026-05-15 (Warm-up DM system deployed — hook + plugin + context injection)
 
 ## Architecture
 ```
@@ -15,6 +15,18 @@ Hermes Profiles (running simultaneously):
   ├── OpenCode Go (DeepSeek)         ├── OpenCode Go (DeepSeek)
   ├── No E2EE                        ├── E2EE enabled (bot has decryption keys)
   └── Gateway (Discord, Matrix)      └── Gateway (Matrix only)
+
+Attendance + Warm-up System (deployed 2026-05-15):
+  Gateway Hook: classroom-attendance/handler.py
+    ├── Intercepts !here / !roll via command:* events
+    ├── Records check-in → ~/.hermes/classroom/attendance/YYYY-MM-DD.json
+    ├── Creates DM room between @bot and student (if not cached)
+    ├── Sends Bell Ringer problem via raw Matrix API (sub-100ms)
+    └── Seeds ~/.hermes/classroom/active_warmups.json with problem context
+
+  Plugin: matrix-warmup-context
+    └── pre_llm_call hook → injects warm-up problem text + TEKS into LLM prompt
+        automatically when student replies in DM. See ADR-004 (implemented).
 ```
 
 ## Users (4 active, 21 deactivated)
@@ -28,9 +40,12 @@ Hermes Profiles (running simultaneously):
 All test student accounts were **soft-deactivated** via Synapse admin API on 2026-05-13 (pre-SSO cleanup). 21 deactivated accounts remain in the DB but cannot log in.
 
 ## Rooms & Spaces
-- 🏫 **All rooms were deleted** during user cleanup (2026-05-13) and room_blocker testing (2026-05-14)
-- No rooms currently exist on the server
-- @admin will recreate team rooms when students are ready to onboard
+| Room | ID | Purpose | Status |
+|------|----|---------|--------|
+| Playground | `!hGLjdogwxZhpXpKXSc:class.mr-romero.com` | Test/check-in room for teacher + admin | ✅ Active (public, no E2EE) |
+| DM rooms | Created on-demand by `!here` hook | Per-student warm-up delivery | ✅ Auto-created, auto-cached |
+
+Room creation is restricted by the `room_blocker` Synapse module — only @admin and @bot can create rooms. @bot creates DM rooms on demand via the Matrix API when students check in with `!here`.
 
 ## Security Restrictions
 | Feature | Status | How |
@@ -47,6 +62,39 @@ All test student accounts were **soft-deactivated** via Synapse admin API on 202
 | E2EE | ✅ Enabled (bot has keys) | MATRIX_ENCRYPTION=true in bot profile + server allows |
 | Google SSO | ✅ Enabled | OIDC with Google Workspace |
 | Room directory | ❌ Blocked | default deny |
+
+## Classroom Bot Config
+| Setting | Value | Why |
+|---------|-------|-----|
+| `require_mention` | `false` | Bot responds to bare `!here` without @-mention |
+| `allowed_rooms` | Playground room ID only | Limits LLM response scope (hook handles `!here` regardless) |
+| `free_response_rooms` | Playground room ID only | Same — hook is pre-LLM, so always fires |
+| `max_turns` | 30 | Agent budget per session |
+
+## Gateway Hooks & Plugins
+| Component | Type | Location | Purpose |
+|-----------|------|----------|---------|
+| `classroom-attendance` | Gateway hook (HOOK.yaml) | `hooks/classroom-attendance/handler.py` | Intercepts `!here`/`!roll`, records attendance, sends warm-up DMs |
+| `classroom-attendance` | Plugin | `plugins/classroom-attendance/plugin.yaml` | Registers `/here`, `/roll` as known commands (handler=None) |
+| `matrix-warmup-context` | Plugin | `plugins/matrix-warmup-context/__init__.py` | `pre_llm_call` hook — injects warm-up context before every LLM call |
+
+### Warm-up Context Pipeline
+```
+Student types !here
+  → Hook catches command:here
+    → Records attendance (JSON file)
+    → Creates/reuses DM room via Matrix API
+    → Sends warm-up problem (Bell Ringer pool, deterministic per-student/day)
+    → Seeds ~/.hermes/classroom/active_warmups.json
+
+Student replies in DM
+  → Gateway routes to LLM session
+  → pre_llm_call hook fires (matrix-warmup-context plugin)
+    → Reads active_warmups.json for this user_id
+    → Injects warm-up problem text + TEKS + instructions
+  → LLM sees context, responds appropriately
+  → Plugin marks status as "responded"
+```
 
 ## Google SSO (OIDC)
 - Provider: Google Workspace
@@ -82,13 +130,21 @@ https://class.epaphrodit.us (or class.mr-romero.com for admin)
 | `hermes-main` | 5 | 26 | Discord/CLI conversations (verified working) |
 | `vanguard-25_26-7th` | 3 | 14 | Classroom bot Matrix DMs |
 
-**Key fixes applied:**
+**Key fixes applied (historical):**
 - DNS: `localhost` → `127.0.0.1` (resolved init failures)
 - Dialectic: `LLM_MODEL_CONFIG__*` → `DIALECTIC__LEVELS__*` (wrong env vars)
 - Model: `deepseek-v4-flash` → `kimi-k2.6` (thinking mode incompatibility)
 - API key: Full 67-char key (was truncated in `.env`)
 - **E2EE alignment:** Removed `enable_room_encryption: false` from Synapse config; bot now uses `MATRIX_ENCRYPTION=true` with fresh crypto store (device `bot3`)
-- **Room blocker:** Built and deployed `room_blocker.py` Synapse module (2026-05-14). Blocks room creation for non-admin users. @aromero intentionally excluded — simulates student experience.
+- **Room blocker:** Built and deployed `room_blocker.py` Synapse module (2026-05-14)
+
+## Known Issues
+| Issue | Status | Notes |
+|-------|--------|-------|
+| Honcho timeouts (30s MEMORY.md/USER.md uploads) | ⚠️ Intermittent | Adds ~60s latency to session startup |
+| DeepSeek API rate limiting | ⚠️ Shared pool | Both gateways share same provider — can hit limits under concurrent load |
+| Honcho dialectic timeouts | ⚠️ Intermittent | `honcho_reasoning` queries sometimes hang |
+| Old room reference `!UZIftRiqrZRKXagMNr` in gateway logs | 🟢 Benign | Deleted room, gateway retry messages are harmless |
 
 ## Key Files
 ```
@@ -99,15 +155,29 @@ https://class.epaphrodit.us (or class.mr-romero.com for admin)
 │   ├── .admin-token.env
 │   ├── synapse/data/homeserver.yaml
 │   └── synapse/modules/room_blocker.py   # Room creation blocker module
-├── onboarding-flow.md    # Bot's student onboarding script
-├── student-profiles/      # Per-student profile markdown files
-├── domain-migration.md    # Domain switch to class.epaphrodit.us
-├── memory-architecture.md     # Honcho memory provider architecture
-├── homeserver.yaml.backup     # Synapse config backup (room_blocker included)
-├── student-creds.md
-├── google-oauth-client.json
+├── references/
+│   └── warmup-context-system.md          # Full warmup hook + plugin architecture
+├── onboarding-flow.md       # Bot's student onboarding script
+├── student-profiles/        # Per-student profile markdown files
+├── adr-004-command-context-pattern.md    # Send-and-seed pattern (implemented)
+├── domain-migration.md      # Domain switch to class.epaphrodit.us
+├── memory-architecture.md   # Honcho memory provider architecture
+├── homeserver.yaml.backup   # Synapse config backup (room_blocker included)
 └── comparison.md, plan.md, etc.
 ```
+
+## Classroom Bot File Locations
+| File | Path | Purpose |
+|------|------|---------|
+| Attendance data | `~/.hermes/classroom/attendance/` | Daily JSON check-in records |
+| Active warmups | `~/.hermes/classroom/active_warmups.json` | Current pending warm-up contexts |
+| DM room cache | `~/.hermes/classroom/dm_rooms.json` | Student → DM room ID mapping |
+| Hook handler | `~/.hermes/profiles/classroom-bot/hooks/` | `!here`/`!roll` interception |
+| Plugin (warmup context) | `~/.hermes/profiles/classroom-bot/plugins/` | pre_llm_call context injection |
+| Gateway config | `~/.hermes/profiles/classroom-bot/config.yaml` | require_mention, allowed_rooms |
+| Bot env | `~/.hermes/profiles/classroom-bot/.env` | Matrix token, homeserver URL |
+| Bot SOUL.md | `~/.hermes/profiles/classroom-bot/SOUL.md` | Bot personality and behavior |
+| Gateway logs | `~/.hermes/profiles/classroom-bot/logs/` | gateway.log + agent.log + errors.log |
 
 ## CLI Quick Reference
 ```bash

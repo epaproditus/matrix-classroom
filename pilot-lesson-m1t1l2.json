@@ -1,0 +1,97 @@
+{
+  "pilot_name": "G8 M1 T1 L2 \u2014 Day 1: Rigid Motion Transformations",
+  "estimated_time": "45 minutes",
+  "materials": [
+    "patty paper",
+    "protractors",
+    "rulers",
+    "straightedge",
+    "pencils",
+    "translations mat"
+  ],
+  "teks": [
+    "8.10A",
+    "8.10B"
+  ],
+  "essential_question": "What are the names and properties of the actions used to carry a figure onto a congruent figure?",
+  "steps": [
+    {
+      "step": 1,
+      "name": "Bell Ringer",
+      "timer": 5,
+      "prompt": "\u270f\ufe0f **Bell Ringer \u2014 5 min**\n\nIn your own words, what does it mean for two shapes to be *congruent*? Give an example from everyday life.\n\n*Write your answer in the chat.*",
+      "slide": null,
+      "teacher_note": "Activates prior knowledge from Module 1 Topic 1 Lesson 1."
+    },
+    {
+      "step": 2,
+      "name": "Hook \u2014 Getting Started: Design Competition",
+      "timer": 12,
+      "prompt": "\ud83c\udfaf **Hook \u2014 Design Competition**\n\nTrace the running man onto your patty paper. Create a logo with 3 copies \u2014 one slide, one flip, one spin.\n\n*Think about: Are all the copies turned the same way?*",
+      "slide_range": [
+        16,
+        23
+      ],
+      "discourse_stems": [
+        "\ud83e\uddd1\u200d\ud83c\udfeb Is the original running man congruent to each copy?",
+        "\ud83e\uddd1\u200d\ud83c\udfeb What is the relationship between the corresponding sides?",
+        "\ud83e\uddd1\u200d\ud83c\udfeb What is the relationship between the corresponding angles?"
+      ],
+      "teacher_note": "Introduce: plane, transformation, rigid motion. Stamp: sliding, flipping, spinning preserve size and shape."
+    },
+    {
+      "step": 3,
+      "name": "DI \u2014 Activity 2.1: Translations on the Plane",
+      "timer": 15,
+      "prompt": "\ud83d\udcd0 **Direct Instruction \u2014 Translations**\n\n1. Trace Trapezoid ABCD onto patty paper (both sides)\n2. Slide it along a line segment on the Translations Mat\n3. Original = *pre-image*. Copy = *image*.\n\n**Discuss:** Is the image congruent to the pre-image?",
+      "slide_range": [
+        24,
+        33
+      ],
+      "teacher_note": "Key: translation preserves orientation. Watch for confusion between 'transformation' and 'translations.'"
+    },
+    {
+      "step": 4,
+      "name": "3A Talk \u2014 Translation Discourse",
+      "timer": 8,
+      "prompt": "\ud83d\udcac **3A Talk \u2014 Think, Write, Share**\n\n*a) What do you notice about the orientation of the pre-image and image after a translation?*\n\n*b) Draw segments connecting corresponding vertices. What do you notice?*\n\n**Sentence stem:** *\"After a translation, the orientation ______ because ______.\"*",
+      "slide_range": [
+        34,
+        37
+      ],
+      "discourse_stems": [
+        "\ud83e\uddd1\u200d\ud83c\udfeb Gathering: What is the definition of a trapezoid?",
+        "\ud83e\uddd1\u200d\ud83c\udfeb Seeing structure: Are two sides parallel? Which sides?",
+        "\ud83e\uddd1\u200d\ud83c\udfeb How do you know \u2220C is a right angle?"
+      ],
+      "teacher_note": "Stamp: Translations preserve size, shape, AND orientation."
+    },
+    {
+      "step": 5,
+      "name": "DI \u2014 Translation Analysis + Definition",
+      "timer": 12,
+      "prompt": "\ud83d\udcd0 **Going Deeper**\n\n1. What changes about a figure after a translation? What stays the same?\n\n2. What information do you NEED to perform a translation?\n\n3. Complete: *\"A translation is a rigid motion that ______.\"*",
+      "slide_range": [
+        38,
+        40
+      ],
+      "teacher_note": "Formal definition: A translation slides each point the same distance and direction."
+    },
+    {
+      "step": 6,
+      "name": "Practice \u2014 Check Your Understanding",
+      "timer": 10,
+      "prompt": "\u270f\ufe0f **Practice**\n\n1. A triangle is translated 5 units right and 3 units up. What happens to its side lengths? Its angle measures?\n\n2. Describe a real-world example of a translation.\n\n3. How is a translation different from just 'moving' a shape?",
+      "slide": null,
+      "teacher_note": "Application questions to check understanding."
+    },
+    {
+      "step": 7,
+      "name": "Closure \u2014 Exit Ticket",
+      "timer": 3,
+      "prompt": "\ud83d\udd1a **Exit Ticket \u2014 DM me your answer**\n\n*Essential Question: What are the names and properties of the actions used to carry a figure onto a congruent figure?*\n\nAnswer in 2-3 sentences. Name at least one rigid motion and one property.",
+      "slide": null,
+      "teacher_note": "DM each student. Formative assessment for Honcho."
+    }
+  ]
+}

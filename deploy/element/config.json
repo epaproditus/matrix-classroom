@@ -1,0 +1,24 @@
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "https://class.mr-romero.com"
+        },
+        "m.identity_server": {
+            "base_url": "https://vector.im"
+        }
+    },
+    "disable_custom_urls": true,
+    "disable_guests": true,
+    "brand": "Element (Classroom)",
+    "default_theme": "light",
+    "show_labs_settings": false,
+    "features": {
+        "feature_spotlight": true,
+        "feature_video_rooms": false,
+        "feature_element_call_video_rooms": false
+    },
+    "setting_defaults": {
+        "MessageComposerInput.showStickersButton": false,
+        "MessageComposerInput.showPollsButton": false
+    }
+}

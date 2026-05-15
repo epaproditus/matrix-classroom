@@ -130,6 +130,26 @@ Uses a **separate Hermes profile** for memory isolation. See ADR-001 and ADR-002
 | Warm-up via cron | ⏳ Pending |
 | Participation tracking | ⏳ Pending |
 
+### Hook + Plugin Architecture (2026-05-15) ✅
+| Component | Status |
+|-----------|--------|
+| `!here`/`!roll` gateway hook (`classroom-attendance`) | ✅ Done — deterministic check-in + warm-up DM |
+| DM room auto-creation on `!here` | ✅ Done — fire-and-forget via Matrix API |
+| Bell Ringer problem pool (4 problems, TEKS 8.5A–8.5I) | ✅ Done — deterministic per-student/day rotation |
+| Active warmup context seeding (`active_warmups.json`) | ✅ Done — send-and-seed pattern (ADR-004) |
+| `matrix-warmup-context` plugin (`pre_llm_call` hook) | ✅ Done — injects warm-up context before every LLM call |
+| Warm-up greeting (no raw username) | ✅ Done — "Hey there!" generic greeting |
+| Attendance clearing/reset | ✅ Done — CLI-cleanable state files |
+
+### Bug Fixes (2026-05-15)
+| Bug | Root Cause | Fix |
+|-----|-----------|-----|
+| Context injection never fired | Plugin looked for `user_id` kwarg, gateway passes `sender_id` | Changed to `sender_id` with `user_id` fallback |
+| Context file not found | Plugin used profile-scoped `HERMES_HOME`, hook hardcoded `~/.hermes` | Both now use `Path.home() / ".hermes"` |
+| LLM hallucinated student name | Greeting used ugly username, context had no identity info | Generic greeting + user_id in context |
+| `!here` ignored by bot | `require_mention: true` | Set to `false` |
+| Config pointed to deleted rooms | Old room IDs from deleted test rooms | Updated to current Playground room |
+
 ---
 
 ## 🔊 Phase 5: Teacher Dashboard (NEW per Claude)
